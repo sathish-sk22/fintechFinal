@@ -3,6 +3,7 @@ package com.example.demo.Service;
 import com.example.demo.Dto.PaymentRequestDto;
 import com.example.demo.Dto.PaymentResponseDto;
 import com.example.demo.Entity.FraudResult;
+import com.example.demo.Entity.KycStatus;
 import com.example.demo.Entity.Transaction;
 import com.example.demo.Entity.TransactionStatus;
 import com.example.demo.Util.UserDetails;
@@ -22,7 +23,9 @@ public class PaymentService {
 
     private final FraudDetectionService fraudDetectionService;
     private final UserRepository userRepository;
+    private final KycService kycService;
     private final OtpService otpService;
+
 
     private final TransactionRepository transactionRepository;
 
@@ -38,6 +41,12 @@ public class PaymentService {
 
         if (sender == null) {
             return failed("Sender not found");
+        }
+
+        // 1.5️⃣ KYC CHECK (🔥 IMPORTANT)
+        KycStatus kycStatus = kycService.getKycStatus(senderUsername);
+        if (kycStatus != KycStatus.APPROVED) {
+            return failed("KYC not approved. Please complete KYC.");
         }
 
         // 2️⃣ Validate receiver
@@ -102,4 +111,5 @@ public class PaymentService {
                 .message(message)
                 .build();
     }
+
 }

@@ -1,10 +1,13 @@
 package com.example.demo.Util;
 
+import com.example.demo.Entity.KycStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
@@ -23,6 +26,17 @@ public class UserDetails {
     private String email;
     @Column(nullable = false)
     private String password;
+
+    // 🔐 KYC fields
+    private String aadhaar;
+    private String pan;
+    private LocalDate dob;
+    private String address;
+
+    // ✅ auto approve
+    @Enumerated(EnumType.STRING)
+    private KycStatus kycStatus; // NOT_SUBMITTED, PENDING, APPROVED
+
     @Column(nullable = false)
     private boolean enabled = false;
 }
